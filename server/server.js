@@ -3,6 +3,7 @@ import http from 'http';
 import 'dotenv/config';
 import cors from 'cors';
 import { connectDB } from './lib/db.js';
+import { Server } from 'socket.io';
 
 import dns from 'node:dns';
 dns.setServers(['8.8.8.8', '1.1.1.1']);
@@ -13,6 +14,39 @@ const app = express();
 
 const server = http.createServer(app)
 
+//initialize socket.io server
+const io = new Server(server, {
+    cors: {
+        origin: "*"
+    }
+});
+
+//store online user
+export const userSocketMap={};  //{userId:socketId}
+
+// Socket.io connection handler
+io.on("connection", (socket) => {
+
+    const userId = socket.handshake.query.userId;
+    console.log("User Connected", userId);
+
+    if (userId) {
+        userSocketMap[userId] = socket.id;
+    }
+
+    // Emit online users to all connected clients
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
+
+    socket.on("disconnect", () => {
+
+        console.log("User Disconnected", userId);
+
+        delete userSocketMap[userId];
+
+        io.emit("getOnlineUsers", Object.keys(userSocketMap));
+    });
+
+});
 
 // Middleware setup
 
@@ -22,6 +56,7 @@ app.use(cors());
 
 // Import routes
 import userRouter from "./routes/userRoutes.js";
+import messageRouter from "./routes/messageRoutes.js";
 
 
 
@@ -32,6 +67,7 @@ import userRouter from "./routes/userRoutes.js";
 // Routes setup
 app.use("/api/status", (req, res)=> res.send("Server is live"));
 app.use("/api/users", userRouter);
+app.use("/api/messages", messageRouter);
 
 
 
