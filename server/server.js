@@ -20,8 +20,29 @@ app.use(express.json({limit: "4mb"}));
 
 app.use(cors());
 
+// Import routes
+import userRouter from "./routes/userRoutes.js";
 
+
+
+
+
+
+
+// Routes setup
 app.use("/api/status", (req, res)=> res.send("Server is live"));
+app.use("/api/users", userRouter);
+
+
+
+
+
+
+
+
+
+
+
 
 // Connect to the database
 
