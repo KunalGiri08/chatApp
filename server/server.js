@@ -22,7 +22,7 @@ export const io = new Server(server, {
 });
 
 //store online user
-export const userSocketMap={};  //{userId:socketId}
+export const userSocketMap = {};  //{userId:socketId}
 
 // Socket.io connection handler
 io.on("connection", (socket) => {
@@ -50,7 +50,7 @@ io.on("connection", (socket) => {
 
 // Middleware setup
 
-app.use(express.json({limit: "4mb"}));
+app.use(express.json({ limit: "4mb" }));
 
 app.use(cors());
 
@@ -65,7 +65,7 @@ import messageRouter from "./routes/messageRoutes.js";
 
 
 // Routes setup
-app.use("/api/status", (req, res)=> res.send("Server is live"));
+app.use("/api/status", (req, res) => res.send("Server is live"));
 app.use("/api/users", userRouter);
 app.use("/api/messages", messageRouter);
 
@@ -84,6 +84,12 @@ app.use("/api/messages", messageRouter);
 
 connectDB();
 
-const PORT = process.env.PORT || 5000;
 
-server.listen(PORT, ()=> console.log("Server is running on PORT: " + PORT));
+if (process.env.NODE_ENV === "production") {
+
+    const PORT = process.env.PORT || 5000;
+
+    server.listen(PORT, () => console.log("Server is running on PORT: " + PORT));
+}
+//export server for versel
+export default server;
