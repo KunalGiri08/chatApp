@@ -16,9 +16,13 @@ const server = http.createServer(app)
 
 //initialize socket.io server
 export const io = new Server(server, {
-    cors: {
-        origin: "*"
-    }
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "https://chat-app-pearl-six.vercel.app"
+    ],
+    credentials: true
+  }
 });
 
 //store online user
@@ -52,7 +56,15 @@ io.on("connection", (socket) => {
 
 app.use(express.json({ limit: "4mb" }));
 
-app.use(cors());
+app.use(
+    cors({
+        origin: [
+            "http://localhost:5173",
+            "https://chat-app-pearl-six.vercel.app"
+        ],
+        credentials: true
+    })
+);
 
 // Import routes
 import userRouter from "./routes/userRoutes.js";
