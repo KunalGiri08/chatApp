@@ -12,25 +12,17 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 const app = express();
 
 // 2. DEFINE THE DYNAMIC CORS FUNCTION
-const corsOptions = {
+// 2. APPLY WILDCARD CORS MIDDLEWARE TEMPORARILY FOR TESTING
+app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like Postman or mobile apps)
-    if (!origin) return callback(null, true);
-    
-    // Check if the frontend origin ends with your Vercel domain pattern
-    if (origin.endsWith('.vercel.app')) {
-      return callback(null, true);
-    }
-    
-    return callback(new Error('Blocked by CORS policy.'), false);
+    // Allows any origin to pass through during your Vercel preview testing phase
+    return callback(null, true);
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
-};
+}));
 
-// Apply dynamic CORS to Express HTTP routes
-app.use(cors(corsOptions));
 
 // 3. APPLY OTHER MIDDLEWARE
 app.use(express.json({ limit: "4mb" }));
