@@ -11,13 +11,26 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 // 1. CREATE THE APP FIRST
 const app = express();
 
-// 2. NOW APPLY CORS MIDDLEWARE
-app.use(cors({
-  origin: 'https://chat-8jsj4xayc-kunal-giri-s-projects.vercel.app',
+// 2. DEFINE THE DYNAMIC CORS FUNCTION
+const corsOptions = {
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like Postman or mobile apps)
+    if (!origin) return callback(null, true);
+    
+    // Check if the frontend origin ends with your Vercel domain pattern
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    return callback(new Error('Blocked by CORS policy.'), false);
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
-}));
+};
+
+// Apply dynamic CORS to Express HTTP routes
+app.use(cors(corsOptions));
 
 // 3. APPLY OTHER MIDDLEWARE
 app.use(express.json({ limit: "4mb" }));
@@ -25,10 +38,15 @@ app.use(express.json({ limit: "4mb" }));
 // Create HTTP server using the initialized app
 const server = http.createServer(app);
 
-// Initialize socket.io server
+// Initialize socket.io server with dynamic matching
 export const io = new Server(server, {
   cors: {
-    origin: "https://chat-8jsj4xayc-kunal-giri-s-projects.vercel.app", // Match your frontend URL here too
+    origin: function (origin, callback) {
+      if (!origin || origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+      return callback(new Error('Blocked by Socket CORS.'), false);
+    },
     credentials: true
   }
 });
