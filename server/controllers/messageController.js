@@ -2,7 +2,7 @@
 import User from "../models/User.js";
 import Message from "../models/Message.js";
 import cloudinary from "../lib/cloudinary.js";
-import {io,userSocketMap} from "../server.js";
+import { io, userSocketMap } from "../server.js";
 
 
 export const getUsersForSidebar = async (req, res) => {
@@ -80,7 +80,7 @@ export const getMessages = async (req, res) => {
 //api to mark messages as seen
 export const markMessagesAsSeen = async (req, res) => {
     try {
-        const {id} = req.params;
+        const { id } = req.params;
         await Message.findByIdAndUpdate(
             id,
             {
@@ -91,7 +91,7 @@ export const markMessagesAsSeen = async (req, res) => {
             success: true,
             message: "Message marked as seen"
         });
-        
+
     } catch (error) {
         console.log(error.message);
         res.json({
@@ -106,13 +106,13 @@ export const markMessagesAsSeen = async (req, res) => {
 // send message from one user to another
 export const sendMessage = async (req, res) => {
     try {
-        const {text,image}= req.body;
+        const { text, image } = req.body;
         const recieverId = req.params.id;
         const senderId = req.user._id;
         let imageUrl = "";
-        if(image){
-           const uploadResponse= await uploadImageToCloudinary(image);
-           imageUrl = uploadResponse.secure_url;
+        if (image) {
+            const uploadResponse = await cloudinary.uploader.upload(image);
+            imageUrl = uploadResponse.secure_url;
         }
 
         const newMessage = await Message.create({
@@ -134,7 +134,7 @@ export const sendMessage = async (req, res) => {
             message: "Message sent successfully",
             newMessage
         });
-        
+
     } catch (error) {
         console.error(error);
         res.json({

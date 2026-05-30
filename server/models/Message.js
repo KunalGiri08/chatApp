@@ -23,7 +23,7 @@ const messageSchema = new mongoose.Schema({
         default: false
     }
     
-},{timpestamps: true});
+},{timestamps: true});
 
 // Create the message model
 const Message = mongoose.model('Message', messageSchema);
