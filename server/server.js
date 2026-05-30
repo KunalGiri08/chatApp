@@ -20,7 +20,8 @@ export const io = new Server(server, {
     origin: [
       "http://localhost:5173",
       "https://chat-app-pearl-six.vercel.app",
-      "https://chat-app-git-main-kunal-giri-s-projects.vercel.app"
+      "https://chat-app-git-main-kunal-giri-s-projects.vercel.app",
+      "https://chat-76mzx1txv-kunal-giri-s-projects.vercel.app"
     ],
     credentials: true
   }
@@ -57,17 +58,15 @@ io.on("connection", (socket) => {
 
 app.use(express.json({ limit: "4mb" }));
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://chat-app-pearl-six.vercel.app",
-      "https://chat-app-git-main-kunal-giri-s-projects.vercel.app"
-    ],
-    credentials: true
-  })
-);
-
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://chat-app-pearl-six.vercel.app",
+    "https://chat-app-git-main-kunal-giri-s-projects.vercel.app",
+    "https://chat-76mzx1txv-kunal-giri-s-projects.vercel.app"
+  ],
+  credentials: true
+}));
 
 // Import routes
 import userRouter from "./routes/userRoutes.js";
